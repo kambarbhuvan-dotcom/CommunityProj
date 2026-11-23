@@ -1,4 +1,6 @@
-{
+git add .
+git commit -m "Describe your change here"
+git push{
   "name": "solar_connect",
   "private": true,
   "version": "0.0.0",
