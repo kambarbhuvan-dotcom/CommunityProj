@@ -4,6 +4,7 @@
  */
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+<<<<<<< HEAD
 import { Menu, Search, Bell, ChevronDown, LogOut, User, Settings, Sun, Sparkles } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import { getInitials } from '../../utils/formatters'
@@ -12,6 +13,18 @@ export default function Topbar({ onMenuClick }) {
   const { profile, isAdmin, signOut } = useAuth()
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [searchValue, setSearchValue] = useState('')
+=======
+import { Menu, Search, Bell, ChevronDown, LogOut, User, Settings, Sun, Sparkles, RotateCcw } from 'lucide-react'
+import { useAuth } from '../../context/AuthContext'
+import { getInitials } from '../../utils/formatters'
+import { resetAllDemoData } from '../../services/solarDataService'
+
+export default function Topbar({ onMenuClick }) {
+  const { user, profile, isAdmin, signOut } = useAuth()
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [searchValue, setSearchValue] = useState('')
+  const [resetting, setResetting] = useState(false)
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
   const navigate = useNavigate()
 
   async function handleSignOut() {
@@ -19,6 +32,23 @@ export default function Topbar({ onMenuClick }) {
     navigate('/')
   }
 
+<<<<<<< HEAD
+=======
+  async function handleResetDemoData() {
+    if (window.confirm('Reset all demo energy logs, records, and configuration to an empty slate for judge presentation?')) {
+      setResetting(true)
+      try {
+        await resetAllDemoData(user?.id)
+        window.location.reload()
+      } catch (err) {
+        console.error('Reset error:', err)
+      } finally {
+        setResetting(false)
+      }
+    }
+  }
+
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
   function handleSearchSubmit(e) {
     if (e.key === 'Enter' && searchValue.trim()) {
       navigate(`/records?q=${encodeURIComponent(searchValue.trim())}`)
@@ -64,6 +94,20 @@ export default function Topbar({ onMenuClick }) {
 
       <div className="flex-1" />
 
+<<<<<<< HEAD
+=======
+      {/* Quick Reset Demo Data Button for Presentations */}
+      <button
+        onClick={handleResetDemoData}
+        disabled={resetting}
+        className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold transition-colors shadow-xs"
+        title="Wipe demo records and reset configuration to a clean slate for judges"
+      >
+        <RotateCcw size={13} className={`text-rose-600 ${resetting ? 'animate-spin' : ''}`} />
+        <span>{resetting ? 'Resetting...' : 'Reset Demo Data'}</span>
+      </button>
+
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
       {/* Announcements Notification Bell */}
       <button
         className="relative p-2.5 rounded-xl hover:bg-[#EAF6FF] text-[#64748B] hover:text-[#2563EB] transition-colors focus:outline-none focus:ring-2 focus:ring-[#87CEEB]"

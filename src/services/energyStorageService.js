@@ -13,7 +13,11 @@
  */
 
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
+<<<<<<< HEAD
 import { DEMO_DAILY_LOGS } from '../data/demoData'
+=======
+import { api, localBackendReady } from '../lib/localBackend'
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
 import { ELECTRICITY_RATE, todayISO } from '../utils/constants'
 import { calcCostSaved, calcEnergyBalance } from '../utils/calculations'
 
@@ -36,7 +40,11 @@ export function getStoredRecords() {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (raw) {
       const parsed = JSON.parse(raw)
+<<<<<<< HEAD
       if (Array.isArray(parsed) && parsed.length > 0) {
+=======
+      if (Array.isArray(parsed)) {
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
         return parsed
       }
     }
@@ -44,6 +52,7 @@ export function getStoredRecords() {
     console.warn('[energyStorageService] Failed to read localStorage:', err)
   }
 
+<<<<<<< HEAD
   // Seed with enriched demo logs
   const seeded = DEMO_DAILY_LOGS.map((log, index) => {
     const community = DEFAULT_COMMUNITIES[index % DEFAULT_COMMUNITIES.length]
@@ -62,6 +71,10 @@ export function getStoredRecords() {
   } catch {}
 
   return seeded
+=======
+  // Zero demo data policy - return empty list if none stored
+  return []
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
 }
 
 export function saveAllRecords(records) {
@@ -76,9 +89,41 @@ export function saveAllRecords(records) {
  * Normalizes a database row to standard frontend record format.
  */
 function normalizeRecord(row) {
+<<<<<<< HEAD
   const gen = Number(row.solar_generated ?? row.solar_generated_kwh) || 0
   const con = Number(row.electricity_consumed ?? row.consumption_kwh) || 0
   const uti = Number(row.solar_utilized ?? row.solar_utilized_kwh) || 0
+=======
+  const gen = Math.max(0, Number(row.solar_generated ?? row.solar_generated_kwh) || 0)
+  const con = Math.max(0, Number(row.electricity_consumed ?? row.consumption_kwh) || 0)
+
+  const rawUti = Number(row.solar_utilized ?? row.solar_utilized_kwh)
+  let uti = (!isNaN(rawUti) && rawUti >= 0 && rawUti <= gen && rawUti <= con)
+    ? rawUti
+    : null
+
+  let exp
+  if (row.grid_export_kwh !== undefined || row.grid_exported !== undefined) {
+    exp = Math.max(0, Number(row.grid_export_kwh ?? row.grid_exported) || 0)
+    if (exp > gen) exp = gen
+  } else {
+    exp = uti !== null ? parseFloat(Math.max(0, gen - uti).toFixed(2)) : 0
+  }
+
+  let imp
+  if (row.grid_import_kwh !== undefined || row.grid_imported !== undefined) {
+    imp = Math.max(0, Number(row.grid_import_kwh ?? row.grid_imported) || 0)
+    if (imp > con) imp = con
+  } else {
+    imp = uti !== null ? parseFloat(Math.max(0, con - uti).toFixed(2)) : 0
+  }
+
+  if (uti === null) {
+    const rawSelfUsed = Math.min(gen - exp, con - imp)
+    uti = Math.max(0, Math.min(gen, Math.min(con, rawSelfUsed)))
+  }
+
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
   const d = row.recorded_date || row.log_date || todayISO()
 
   return {
@@ -93,8 +138,13 @@ function normalizeRecord(row) {
     consumption_kwh: con,
     solar_utilized: uti,
     solar_utilized_kwh: uti,
+<<<<<<< HEAD
     grid_export_kwh: parseFloat(Math.max(0, gen - uti).toFixed(2)),
     grid_import_kwh: parseFloat(Math.max(0, con - uti).toFixed(2)),
+=======
+    grid_export_kwh: exp,
+    grid_import_kwh: imp,
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
     notes: row.notes || '',
     created_by: row.created_by || null,
     created_at: row.created_at || new Date().toISOString(),
@@ -106,6 +156,18 @@ function normalizeRecord(row) {
  * Retrieve all records (from Supabase if configured, otherwise localStorage).
  */
 export async function getAllRecords() {
+<<<<<<< HEAD
+=======
+  if (await localBackendReady()) {
+    try {
+      const rows = await api('/api/records')
+      return (Array.isArray(rows) ? rows : []).map(normalizeRecord)
+    } catch (err) {
+      console.warn('[energyStorageService] Local API records read failed:', err.message)
+    }
+  }
+
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
   if (isSupabaseConfigured) {
     try {
       const { data, error } = await supabase
@@ -182,6 +244,31 @@ export async function saveRecord(recordData, userId = null) {
   const uti = Number(recordData.solar_utilized ?? recordData.solar_utilized_kwh) || 0
   const dateStr = recordData.recorded_date || recordData.log_date || todayISO()
 
+<<<<<<< HEAD
+=======
+  if (await localBackendReady()) {
+    try {
+      const saved = await api('/api/records', {
+        method: 'POST',
+        body: {
+          ...recordData,
+          solar_generated: gen,
+          electricity_consumed: con,
+          solar_utilized: uti,
+          recorded_date: dateStr,
+          log_date: dateStr,
+        },
+      })
+      const normalized = normalizeRecord(saved)
+      syncToLocalCache(normalized)
+      return normalized
+    } catch (err) {
+      console.warn('[energyStorageService] Local API record save failed:', err.message)
+      throw err
+    }
+  }
+
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
   // 1. Try Supabase write if configured
   if (isSupabaseConfigured) {
     try {
@@ -271,6 +358,17 @@ function syncToLocalCache(record) {
  * Delete a record by ID.
  */
 export async function deleteRecord(id) {
+<<<<<<< HEAD
+=======
+  if (await localBackendReady()) {
+    try {
+      await api(`/api/records/${encodeURIComponent(id)}`, { method: 'DELETE' })
+    } catch (err) {
+      console.warn('[energyStorageService] Local API record delete failed:', err.message)
+    }
+  }
+
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
   if (isSupabaseConfigured && !id.startsWith('rec-')) {
     try {
       const { error } = await supabase
@@ -296,6 +394,24 @@ export async function deleteRecord(id) {
  * Fetch list of community buildings.
  */
 export async function getCommunityBuildings() {
+<<<<<<< HEAD
+=======
+  if (await localBackendReady()) {
+    try {
+      const rows = await api('/api/buildings')
+      if (Array.isArray(rows) && rows.length) {
+        return rows.map((b) => ({
+          id: b.id,
+          building_name: b.building_name || b.name,
+          location: b.location || `${b.address || ''}, ${b.city || 'Hubballi'}`,
+        }))
+      }
+    } catch (err) {
+      console.warn('[energyStorageService] Local API buildings read failed:', err.message)
+    }
+  }
+
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
   if (isSupabaseConfigured) {
     try {
       const { data, error } = await supabase
@@ -312,7 +428,11 @@ export async function getCommunityBuildings() {
   return DEFAULT_COMMUNITIES.map((name, idx) => ({
     id: `bld-default-${idx + 1}`,
     building_name: name,
+<<<<<<< HEAD
     location: 'Bengaluru',
+=======
+    location: 'Hubballi',
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
   }))
 }
 
@@ -322,7 +442,11 @@ export function getCommunityList() {
 
 export async function resetRecordsToDemo() {
   localStorage.removeItem(STORAGE_KEY)
+<<<<<<< HEAD
   return getStoredRecords().map(normalizeRecord)
+=======
+  return []
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
 }
 
 export function calculateRecordTotals(records = [], tariff = ELECTRICITY_RATE) {

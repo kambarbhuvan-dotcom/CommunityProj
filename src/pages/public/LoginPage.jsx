@@ -136,7 +136,11 @@ export default function LoginPage() {
                 className="w-full py-2.5 px-3 rounded-xl bg-[#EAF6FF] hover:bg-[#DCEBFA] text-[#2563EB] text-xs font-bold flex items-center justify-center gap-2 border border-[#DCEBFA] transition-colors"
               >
                 <ShieldCheck size={15} />
+<<<<<<< HEAD
                 Sign In as Administrator
+=======
+                Sign In as Community Administrator
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
               </button>
               <button
                 type="button"

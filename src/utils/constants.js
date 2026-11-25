@@ -35,6 +35,65 @@ export const GUIDE_CATEGORIES = [
   { value: 'savings',      label: 'Savings & Finance' },
 ]
 
+<<<<<<< HEAD
+=======
+// ─── Indian Solar & Utility Constants ──────────────────────────────────────
+export const INDIAN_CITIES = [
+  'Hubballi',
+  'Bengaluru',
+  'Delhi NCR',
+  'Mumbai',
+  'Hyderabad',
+  'Chennai',
+  'Pune',
+  'Ahmedabad',
+  'Kolkata',
+  'Jaipur',
+  'Surat',
+  'Lucknow',
+  'Chandigarh',
+  'Kochi',
+  'Indore',
+  'Coimbatore',
+  'Other',
+]
+
+export const ELECTRICITY_PROVIDERS = [
+  'HESCOM (Hubballi)',
+  'BESCOM (Bangalore)',
+  'Tata Power (Delhi / Mumbai)',
+  'Adani Electricity (Mumbai)',
+  'MSEDCL (Maharashtra)',
+  'TANGEDCO (Tamil Nadu)',
+  'TSSPDCL (Telangana)',
+  'UGVCL / DGVCL (Gujarat)',
+  'BSES Rajdhani / Yamuna (Delhi)',
+  'KSEB (Kerala)',
+  'Torrent Power',
+  'Other State DISCOM',
+]
+
+export const PANEL_TYPES = [
+  'Monocrystalline',
+  'Polycrystalline',
+  'Bifacial Monocrystalline',
+  'Thin-Film',
+]
+
+export const SYSTEM_TYPES = [
+  { value: 'on_grid', label: 'On-Grid / Grid-Tied', desc: 'Net-metered with utility, exports surplus' },
+  { value: 'hybrid', label: 'Hybrid (Grid + Battery)', desc: 'Stores in battery, exports excess' },
+  { value: 'off_grid', label: 'Off-Grid (Stand-Alone)', desc: 'Independent battery storage only' },
+]
+
+export const WEATHER_CONDITIONS = [
+  'Sunny / Clear Sky',
+  'Partly Cloudy',
+  'Overcast / Hazy',
+  'Monsoon / Rainy',
+]
+
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
 // ─── Pagination ───────────────────────────────────────────────────────────
 export const RECORDS_PER_PAGE = 10
 export const ADMIN_RECORDS_PER_PAGE = 20

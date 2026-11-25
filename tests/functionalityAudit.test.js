@@ -18,8 +18,18 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import {
   calcNetEnergy, calcEnergyBalance, calcCostSaved, calcCO2Avoided,
   calcCO2AvoidedFromUtilized, calcSolarUtilized, calcSelfSufficiency,
+<<<<<<< HEAD
   co2ToTrees, formatKwh, formatCurrency, formatCO2, formatPercent
 } from '../src/utils/calculations'
+=======
+  co2ToTrees, formatKwh, formatCurrency, formatCO2, formatPercent,
+  calcRecordSelfConsumption, validateEnergyBalance, calculateAggregatedAnalytics
+} from '../src/utils/calculations'
+import {
+  getSolarSetup, saveSolarSetup, getUserSettings, saveUserSettings,
+  getEnergyLogs, saveEnergyLog, deleteEnergyLog, checkDuplicateLog
+} from '../src/services/solarDataService'
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
 import { todayISO, ELECTRICITY_RATE, CO2_FACTOR } from '../src/utils/constants'
 
 // Services
@@ -68,6 +78,45 @@ describe('SolarConnect Full System Functionality Audit', () => {
       expect(calcCostSaved(0, 7.50)).toBe(0)
     })
 
+<<<<<<< HEAD
+=======
+    it('safely bounds self-consumed solar power within physical limits (gen and con)', () => {
+      // Mismatched inputs where con - imp yields 14.20 kWh, but solar generated is only 10.00 kWh
+      const mismatched = calcRecordSelfConsumption({
+        solar_generated_kwh: 10.0,
+        total_consumption_kwh: 20.0,
+        grid_import_kwh: 5.8, // 20 - 5.8 = 14.2
+        grid_export_kwh: 0,
+      })
+      // Must be safely capped at solar generated (10.0 kWh)
+      expect(mismatched).toBe(10.0)
+
+      // When solar exceeds consumption (gen = 25, con = 15, exp = 10, imp = 0)
+      const excessGen = calcRecordSelfConsumption({
+        solar_generated_kwh: 25.0,
+        total_consumption_kwh: 15.0,
+        grid_export_kwh: 10.0,
+        grid_import_kwh: 0,
+      })
+      expect(excessGen).toBe(15.0)
+
+      // Zero or negative guards
+      const zeroGen = calcRecordSelfConsumption({
+        solar_generated_kwh: 0,
+        total_consumption_kwh: 10.0,
+        grid_import_kwh: 10.0,
+        grid_export_kwh: 0,
+      })
+      expect(zeroGen).toBe(0)
+
+      // Savings and CO2 strictly derived from bounded self-consumed
+      const savings = calcCostSaved(mismatched, 7.50)
+      expect(savings).toBe(75.0) // 10 * 7.50, NOT 14.2 * 7.50
+      const co2 = calcCO2Avoided(mismatched, 0.82)
+      expect(co2).toBe(8.2) // 10 * 0.82
+    })
+
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
     it('calculates CO2 emissions avoided based on clean solar energy', () => {
       // 100 kWh generated × 0.82 kg CO2/kWh = 82 kg CO2 avoided
       expect(calcCO2Avoided(100, 0.82)).toBe(82.0)
@@ -112,12 +161,20 @@ describe('SolarConnect Full System Functionality Audit', () => {
 
   // ─── 3. Energy Record Management & Validation ──────────────────────────────
   describe('3. Energy Usage Tracking Module (CRUD & Validation)', () => {
+<<<<<<< HEAD
     it('loads initial records seeded with realistic demo data', async () => {
       const records = await getAllRecords()
       expect(records.length).toBeGreaterThan(0)
       expect(records[0]).toHaveProperty('solar_generated_kwh')
       expect(records[0]).toHaveProperty('consumption_kwh')
       expect(records[0]).toHaveProperty('solar_utilized_kwh')
+=======
+    it('enforces zero demo data policy on fresh initial storage state', async () => {
+      localStorage.clear()
+      const records = await getAllRecords()
+      expect(Array.isArray(records)).toBe(true)
+      expect(records.length).toBe(0)
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
     })
 
     it('creates a new energy record with derived net export/import', async () => {
@@ -315,6 +372,16 @@ describe('SolarConnect Full System Functionality Audit', () => {
   // ─── 6. Admin Overview Metrics Aggregator ──────────────────────────────────
   describe('6. Admin Dashboard Live Metrics Aggregator', () => {
     it('aggregates live community stats without hardcoding', async () => {
+<<<<<<< HEAD
+=======
+      await saveRecord({
+        building: 'Sunrise Apartments Block A',
+        log_date: '2026-11-23',
+        solar_generated: 25.0,
+        electricity_consumed: 20.0,
+        solar_utilized: 18.0,
+      })
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
       const metrics = await getAdminDashboardOverview()
       expect(metrics.totalUsers).toBeGreaterThan(0)
       expect(metrics.totalBuildings).toBeGreaterThan(0)
@@ -325,4 +392,177 @@ describe('SolarConnect Full System Functionality Audit', () => {
       expect(Array.isArray(metrics.recentRecords)).toBe(true)
     })
   })
+<<<<<<< HEAD
+=======
+
+  // ─── 7. Real Solar Data Service & Analytics Engine (Zero Demo Data) ───────
+  describe('7. Real Solar Data Service & Analytics Engine (Zero Demo Data)', () => {
+    it('manages real user solar installation setup with battery specifications', async () => {
+      const userId = 'test_user_solar_1'
+      const initial = await getSolarSetup(userId)
+      expect(initial).toBeNull()
+
+      const saved = await saveSolarSetup(userId, {
+        system_capacity_kw: 5.5,
+        panel_type: 'Bifacial Monocrystalline',
+        panel_count: 14,
+        installation_date: '2026-01-15',
+        city_location: 'Hubballi',
+        inverter_capacity_kw: 5.0,
+        has_battery_storage: true,
+        battery_capacity_kwh: 10.0,
+        system_type: 'hybrid',
+      })
+
+      expect(saved.system_capacity_kw).toBe(5.5)
+      expect(saved.has_battery_storage).toBe(true)
+      expect(saved.battery_capacity_kwh).toBe(10.0)
+
+      const fetched = await getSolarSetup(userId)
+      expect(fetched.system_capacity_kw).toBe(5.5)
+      expect(fetched.panel_type).toBe('Bifacial Monocrystalline')
+    })
+
+    it('manages user settings and custom tariff / grid emission factor', async () => {
+      const userId = 'test_user_settings_1'
+      const saved = await saveUserSettings(userId, {
+        electricity_tariff_inr: 8.20,
+        grid_emission_factor: 0.85,
+        household_members: 5,
+        electricity_provider: 'Tata Power (Delhi / Mumbai)',
+      })
+
+      expect(saved.electricity_tariff_inr).toBe(8.20)
+      expect(saved.grid_emission_factor).toBe(0.85)
+
+      const fetched = await getUserSettings(userId)
+      expect(fetched.electricity_tariff_inr).toBe(8.20)
+      expect(fetched.household_members).toBe(5)
+    })
+
+    it('records and calculates daily energy logs with battery and net-metering', async () => {
+      const userId = 'test_user_logs_1'
+
+      // Starts completely empty
+      const initialLogs = await getEnergyLogs(userId)
+      expect(initialLogs).toEqual([])
+
+      // Save day 1
+      const log1 = await saveEnergyLog(userId, {
+        log_date: '2026-11-21',
+        solar_generated_kwh: 20.0,
+        total_consumption_kwh: 16.0,
+        grid_import_kwh: 4.0,
+        grid_export_kwh: 6.0,
+        battery_charge_kwh: 4.0,
+        battery_discharge_kwh: 2.0,
+        notes: 'Sunny day, battery fully cycled',
+      })
+
+      expect(log1).toBeDefined()
+      expect(log1.solar_generated_kwh).toBe(20.0)
+      expect(log1.total_consumption_kwh).toBe(16.0)
+
+      // Physical balance validation
+      const balanceCheck = validateEnergyBalance(log1)
+      expect(balanceCheck.valid).toBe(true)
+
+      // Duplicate prevention check
+      const dup = await checkDuplicateLog(userId, '2026-11-21')
+      expect(dup).not.toBeNull()
+      expect(dup.id).toBe(log1.id)
+
+      // Save day 2
+      await saveEnergyLog(userId, {
+        log_date: '2026-11-22',
+        solar_generated_kwh: 18.0,
+        total_consumption_kwh: 15.0,
+        grid_import_kwh: 3.0,
+        grid_export_kwh: 6.0,
+        battery_charge_kwh: 0,
+        battery_discharge_kwh: 0,
+        notes: 'Grid-tied direct usage',
+      })
+
+      const allUserLogs = await getEnergyLogs(userId)
+      expect(allUserLogs.length).toBe(2)
+
+      // Run automated aggregated analytics
+      const analytics = calculateAggregatedAnalytics(allUserLogs, 8.0, 0.82)
+      expect(analytics.totalGen).toBe(38.0)
+      expect(analytics.totalCon).toBe(31.0)
+      expect(analytics.gridDependency).toBeGreaterThan(0)
+      expect(analytics.selfSufficiency).toBeGreaterThan(0)
+      expect(analytics.totalSavings).toBeGreaterThan(0)
+      expect(analytics.totalCO2).toBeGreaterThan(0)
+      expect(analytics.energyDistribution.length).toBe(3)
+
+      // Delete day 1
+      await deleteEnergyLog(userId, log1.id)
+      const afterDelete = await getEnergyLogs(userId)
+      expect(afterDelete.length).toBe(1)
+      expect(afterDelete[0].log_date).toBe('2026-11-22')
+    })
+
+    it('validates physical energy balance accurately without false positives on zero values', () => {
+      // User scenario: gridExported = 0, solarGenerated = 4.5, gridImported = 14.5, totalConsumed = 19.0
+      // 4.5 - 0 + 14.5 = 19.0 === totalConsumed (0 discrepancy)
+      const zeroExportCheck = validateEnergyBalance({
+        solar_generated_kwh: 4.5,
+        total_consumption_kwh: 19.0,
+        grid_import_kwh: 14.5,
+        grid_export_kwh: 0,
+      })
+      expect(zeroExportCheck.valid).toBe(true)
+      expect(zeroExportCheck.diff).toBe(0)
+
+      // Incomplete entries (< 4 fields populated) should not trigger warning
+      const partialCheck = validateEnergyBalance({
+        solar_generated_kwh: 12.0,
+        total_consumption_kwh: 15.0,
+      })
+      expect(partialCheck.valid).toBe(true)
+
+      // Within 0.1 kWh tolerance (rounding jitter)
+      const toleranceCheck = validateEnergyBalance({
+        solar_generated_kwh: 10.0,
+        grid_export_kwh: 2.0,
+        grid_import_kwh: 7.05,
+        total_consumption_kwh: 15.0, // (10 - 2 + 7.05) - 15 = 0.05 <= 0.1
+      })
+      expect(toleranceCheck.valid).toBe(true)
+
+      // Discrepancy exceeding 0.1 kWh triggers advisory
+      const mismatchCheck = validateEnergyBalance({
+        solar_generated_kwh: 10.0,
+        grid_export_kwh: 2.0,
+        grid_import_kwh: 5.0,
+        total_consumption_kwh: 20.0, // (10 - 2 + 5) = 13 vs 20 -> 7 kWh diff
+      })
+      expect(mismatchCheck.valid).toBe(false)
+      expect(mismatchCheck.diff).toBe(7.0)
+      expect(mismatchCheck.message).toContain('7 kWh detected')
+
+      // Physically impossible: gridExported > solarGenerated
+      const impossibleExport = validateEnergyBalance({
+        solar_generated_kwh: 5.0,
+        grid_export_kwh: 8.0,
+        grid_import_kwh: 10.0,
+        total_consumption_kwh: 7.0,
+      })
+      expect(impossibleExport.valid).toBe(false)
+      expect(impossibleExport.message).toContain('Grid exported cannot exceed solar energy generated')
+
+      // Physically impossible: gridImported > totalConsumed
+      const impossibleImport = validateEnergyBalance({
+        solar_generated_kwh: 5.0,
+        grid_export_kwh: 2.0,
+        grid_import_kwh: 15.0,
+        total_consumption_kwh: 10.0,
+      })
+      expect(impossibleImport.valid).toBe(false)
+      expect(impossibleImport.message).toContain('Grid imported cannot exceed total electricity consumed')
+    })
+  })
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
 })

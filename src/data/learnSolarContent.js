@@ -265,7 +265,11 @@ A successful residential solar installation blends solid structural engineering 
 ## Step 1: Rooftop Feasibility Assessment
 * **Shadow-Free Sun Window:** Your roof should receive unshaded sunlight between **9:00 AM and 4:00 PM**. Watch out for water tanks, elevator headrooms, and neighboring trees.
 * **Roof Orientation:** In the Northern Hemisphere (including India), panels **must face True South** to maximize solar irradiance across all 12 months.
+<<<<<<< HEAD
 * **Tilt Angle:** Match the tilt angle to your city's latitude (e.g., ~13° in Bengaluru/Chennai, ~19° in Mumbai, ~28° in New Delhi) with a 2-3° drainage slope for rainwater runoff.
+=======
+* **Tilt Angle:** Match the tilt angle to your city's latitude (e.g., ~15° in Hubballi, ~13° in Bengaluru/Chennai, ~19° in Mumbai, ~28° in New Delhi) with a 2-3° drainage slope for rainwater runoff.
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
 
 ---
 

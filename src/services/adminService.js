@@ -14,6 +14,10 @@ import { DEMO_PROFILES, DEMO_GUIDES, DEMO_ANNOUNCEMENTS } from '../data/demoData
 import { COMMUNITY_EVENTS, BUILDING_LEADERBOARD } from '../data/communityData'
 import { getAllRecords, saveRecord, deleteRecord } from './energyStorageService'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
+<<<<<<< HEAD
+=======
+import { api, localBackendReady } from '../lib/localBackend'
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
 
 // Local storage keys for persistent admin-managed states
 const USERS_STORAGE_KEY = 'solarconnect_admin_users_v1'
@@ -173,8 +177,13 @@ export async function deleteUser(userId, requestingUserId) {
 
 const DEFAULT_EVENT_REGISTRATIONS = {
   'evt-1': [
+<<<<<<< HEAD
     { id: 'reg-1', name: 'Dr. Ramesh Sharma', unit: 'A-101', email: 'ramesh.sharma@example.com', registered_at: '2026-11-18T10:30:00Z' },
     { id: 'reg-2', name: 'Priya Sundaram', unit: 'B-204', email: 'priya.sundaram@example.com', registered_at: '2026-11-19T14:15:00Z' },
+=======
+    { id: 'reg-1', name: 'Community Administrator', unit: 'A-101', email: 'admin@solarconnect.local', registered_at: '2026-11-18T10:30:00Z' },
+    { id: 'reg-2', name: 'Solar Resident', unit: 'B-204', email: 'resident@solarconnect.local', registered_at: '2026-11-19T14:15:00Z' },
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
     { id: 'reg-3', name: 'Vikram Joshi', unit: 'C-302', email: 'vikram.joshi@example.com', registered_at: '2026-11-20T09:00:00Z' },
     { id: 'reg-4', name: 'Ananya Deshmukh', unit: 'A-202', email: 'ananya.deshmukh@example.com', registered_at: '2026-11-20T16:45:00Z' },
   ],
@@ -486,7 +495,11 @@ const DEFAULT_BUILDINGS = BUILDING_LEADERBOARD.map((b, idx) => ({
   id: `bld-${idx + 1}`,
   name: b.name,
   address: `${10 + idx * 2} Renewable Way, Tech Corridor`,
+<<<<<<< HEAD
   city: 'Bengaluru',
+=======
+  city: 'Hubballi',
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
   total_units: b.households + 6,
   active_solar_units: b.households,
   installed_capacity_kw: b.installedCapacityKw,
@@ -526,7 +539,11 @@ export async function getAllBuildings() {
         return data.map((b) => ({
           ...b,
           name: b.building_name,
+<<<<<<< HEAD
           address: b.location || 'Bengaluru',
+=======
+          address: b.location || 'Hubballi',
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
           total_units: b.total_units || 24,
           active_solar_units: b.active_solar_units || 6,
         }))
@@ -544,7 +561,11 @@ export async function createBuilding(data) {
     id: `bld-${Date.now()}`,
     name: data.name?.trim() || 'New Community Building',
     address: data.address?.trim() || 'Green Avenue',
+<<<<<<< HEAD
     city: data.city?.trim() || 'Bengaluru',
+=======
+    city: data.city?.trim() || 'Hubballi',
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
     total_units: Number(data.total_units) || 20,
     active_solar_units: Number(data.active_solar_units) || 0,
     installed_capacity_kw: Number(data.installed_capacity_kw) || 0,

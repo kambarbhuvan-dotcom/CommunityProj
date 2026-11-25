@@ -334,11 +334,19 @@ GROUP BY b.id, b.building_name, b.location;
 -- ----------------------------------------------------------------------------
 INSERT INTO public.buildings (id, building_name, location)
 VALUES
+<<<<<<< HEAD
     ('11111111-1111-1111-1111-111111111111', 'Sunrise Apartments Block A', '12 Green Park Road, Bengaluru'),
     ('22222222-2222-2222-2222-222222222222', 'Sunrise Apartments Block B', '14 Green Park Road, Bengaluru'),
     ('33333333-3333-3333-3333-333333333333', 'Green Valley Eco-Homes', '5th Cross, Indiranagar, Bengaluru'),
     ('44444444-4444-4444-4444-444444444444', 'Solar Heights Residency', '7th Main, HSR Layout, Bengaluru'),
     ('55555555-5555-5555-5555-555555555555', 'EcoView Community Park', 'Whitefield Main Road, Bengaluru')
+=======
+    ('11111111-1111-1111-1111-111111111111', 'Sunrise Apartments Block A', '12 Vidyanagar Main Road, Hubballi'),
+    ('22222222-2222-2222-2222-222222222222', 'Sunrise Apartments Block B', '14 Vidyanagar Main Road, Hubballi'),
+    ('33333333-3333-3333-3333-333333333333', 'Green Valley Eco-Homes', '5th Cross, Unkal Lake View, Hubballi'),
+    ('44444444-4444-4444-4444-444444444444', 'Solar Heights Residency', '7th Main, Gokul Road, Hubballi'),
+    ('55555555-5555-5555-5555-555555555555', 'EcoView Community Park', 'Airport Road, Hubballi')
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO public.solar_guides (id, title, category, description, content)
@@ -394,3 +402,77 @@ VALUES
         '2026-12-12'
     )
 ON CONFLICT (id) DO NOTHING;
+<<<<<<< HEAD
+=======
+
+
+-- ----------------------------------------------------------------------------
+-- 7. SOLAR SYSTEMS (Installation Details)
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS public.solar_systems (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    system_capacity_kw NUMERIC(8, 2) NOT NULL DEFAULT 0.0 CHECK (system_capacity_kw >= 0),
+    panel_type TEXT NOT NULL DEFAULT 'Monocrystalline' CHECK (panel_type IN ('Monocrystalline', 'Polycrystalline', 'Thin-film', 'Other')),
+    panel_count INTEGER NOT NULL DEFAULT 0 CHECK (panel_count >= 0),
+    installation_date DATE,
+    location TEXT,
+    inverter_capacity_kw NUMERIC(8, 2) DEFAULT 0.0 CHECK (inverter_capacity_kw >= 0),
+    system_type TEXT NOT NULL DEFAULT 'On-grid' CHECK (system_type IN ('On-grid', 'Off-grid', 'Hybrid')),
+    battery_available BOOLEAN NOT NULL DEFAULT false,
+    battery_capacity_kwh NUMERIC(8, 2) DEFAULT 0.0 CHECK (battery_capacity_kwh >= 0),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT uq_solar_system_user UNIQUE (user_id)
+);
+
+-- ----------------------------------------------------------------------------
+-- 8. USER SETTINGS (Consumption Details & Factors)
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS public.user_settings (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    avg_daily_consumption_kwh NUMERIC(8, 2) DEFAULT 0.0 CHECK (avg_daily_consumption_kwh >= 0),
+    avg_monthly_consumption_kwh NUMERIC(8, 2) DEFAULT 0.0 CHECK (avg_monthly_consumption_kwh >= 0),
+    electricity_tariff NUMERIC(8, 2) NOT NULL DEFAULT 7.50 CHECK (electricity_tariff >= 0),
+    grid_emission_factor NUMERIC(6, 4) NOT NULL DEFAULT 0.8200 CHECK (grid_emission_factor >= 0),
+    household_members INTEGER DEFAULT 1 CHECK (household_members >= 1),
+    electricity_provider TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT uq_user_settings_user UNIQUE (user_id)
+);
+
+-- ----------------------------------------------------------------------------
+-- 9. ENERGY LOGS (Daily User Solar & Grid Readings)
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS public.energy_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    solar_system_id UUID REFERENCES public.solar_systems(id) ON DELETE SET NULL,
+    log_date DATE NOT NULL DEFAULT CURRENT_DATE,
+    solar_generated_kwh NUMERIC(8, 2) NOT NULL DEFAULT 0.0 CHECK (solar_generated_kwh >= 0),
+    total_consumption_kwh NUMERIC(8, 2) NOT NULL DEFAULT 0.0 CHECK (total_consumption_kwh >= 0),
+    grid_import_kwh NUMERIC(8, 2) NOT NULL DEFAULT 0.0 CHECK (grid_import_kwh >= 0),
+    grid_export_kwh NUMERIC(8, 2) NOT NULL DEFAULT 0.0 CHECK (grid_export_kwh >= 0),
+    battery_charge_kwh NUMERIC(8, 2) NOT NULL DEFAULT 0.0 CHECK (battery_charge_kwh >= 0),
+    battery_discharge_kwh NUMERIC(8, 2) NOT NULL DEFAULT 0.0 CHECK (battery_discharge_kwh >= 0),
+    notes TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT uq_energy_log_user_date UNIQUE (user_id, log_date)
+);
+
+CREATE INDEX IF NOT EXISTS idx_solar_systems_user ON public.solar_systems(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_settings_user ON public.user_settings(user_id);
+CREATE INDEX IF NOT EXISTS idx_energy_logs_user ON public.energy_logs(user_id);
+CREATE INDEX IF NOT EXISTS idx_energy_logs_user_date ON public.energy_logs(user_id, log_date DESC);
+
+ALTER TABLE public.solar_systems ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.user_settings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.energy_logs ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage own solar system" ON public.solar_systems FOR ALL USING (auth.uid() = user_id);
+CREATE POLICY "Users can manage own settings" ON public.user_settings FOR ALL USING (auth.uid() = user_id);
+CREATE POLICY "Users can manage own energy logs" ON public.energy_logs FOR ALL USING (auth.uid() = user_id);
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae

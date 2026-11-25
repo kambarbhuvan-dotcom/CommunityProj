@@ -6,11 +6,19 @@
 -- 1. Insert Initial Participating Buildings
 INSERT INTO public.buildings (id, building_name, location)
 VALUES
+<<<<<<< HEAD
     ('11111111-1111-1111-1111-111111111111', 'Sunrise Apartments Block A', '12 Green Park Road, Bengaluru'),
     ('22222222-2222-2222-2222-222222222222', 'Sunrise Apartments Block B', '14 Green Park Road, Bengaluru'),
     ('33333333-3333-3333-3333-333333333333', 'Green Valley Eco-Homes', '5th Cross, Indiranagar, Bengaluru'),
     ('44444444-4444-4444-4444-444444444444', 'Solar Heights Residency', '7th Main, HSR Layout, Bengaluru'),
     ('55555555-5555-5555-5555-555555555555', 'EcoView Community Park', 'Whitefield Main Road, Bengaluru')
+=======
+    ('11111111-1111-1111-1111-111111111111', 'Sunrise Apartments Block A', '12 Vidyanagar Main Road, Hubballi'),
+    ('22222222-2222-2222-2222-222222222222', 'Sunrise Apartments Block B', '14 Vidyanagar Main Road, Hubballi'),
+    ('33333333-3333-3333-3333-333333333333', 'Green Valley Eco-Homes', '5th Cross, Unkal Lake View, Hubballi'),
+    ('44444444-4444-4444-4444-444444444444', 'Solar Heights Residency', '7th Main, Gokul Road, Hubballi'),
+    ('55555555-5555-5555-5555-555555555555', 'EcoView Community Park', 'Airport Road, Hubballi')
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
 ON CONFLICT (id) DO UPDATE
 SET building_name = EXCLUDED.building_name,
     location = EXCLUDED.location;

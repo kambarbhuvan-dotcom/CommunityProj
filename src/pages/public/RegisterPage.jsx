@@ -17,6 +17,10 @@ export default function RegisterPage() {
   const [form, setForm] = useState({
     full_name: '',
     email: '',
+<<<<<<< HEAD
+=======
+    role: 'resident',
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
     password: '',
     confirm: '',
     building_id: '',
@@ -65,6 +69,10 @@ export default function RegisterPage() {
 
     const { error: signUpErr } = await signUp(form.email, form.password, {
       full_name: form.full_name,
+<<<<<<< HEAD
+=======
+      role: form.role || 'resident',
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
       unit_number: form.unit_number,
       building_id: form.building_id,
       panel_count: form.has_panels ? parseInt(form.panel_count) : 0,
@@ -135,11 +143,34 @@ export default function RegisterPage() {
                   value={form.full_name}
                   onChange={handleChange}
                   className="form-input pl-9 text-sm"
+<<<<<<< HEAD
                   placeholder="e.g. Priya Sharma"
+=======
+                  placeholder="e.g. Ananya Rao"
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
                 />
               </div>
             </div>
 
+<<<<<<< HEAD
+=======
+            {/* Account Role */}
+            <div>
+              <label className="form-label">Account Role *</label>
+              <div className="relative">
+                <select
+                  name="role"
+                  value={form.role}
+                  onChange={handleChange}
+                  className="form-input text-sm"
+                >
+                  <option value="resident">Resident</option>
+                  <option value="admin">Community Administrator</option>
+                </select>
+              </div>
+            </div>
+
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
             {/* Email */}
             <div>
               <label className="form-label">Email Address *</label>

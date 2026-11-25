@@ -20,11 +20,19 @@ const DEMO_ADMIN = {
   user: {
     id: 'usr-admin-1',
     email: 'admin@solarconnect.internal',
+<<<<<<< HEAD
     user_metadata: { full_name: 'Administrator' },
   },
   profile: {
     id: 'usr-admin-1',
     full_name: 'Administrator',
+=======
+    user_metadata: { full_name: 'Community Administrator', role: 'admin' },
+  },
+  profile: {
+    id: 'usr-admin-1',
+    full_name: 'Community Administrator',
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
     email: 'admin@solarconnect.internal',
     unit_number: 'A-101',
     building_id: '11111111-1111-1111-1111-111111111111',
@@ -35,7 +43,11 @@ const DEMO_ADMIN = {
   building: {
     id: '11111111-1111-1111-1111-111111111111',
     building_name: 'Sunrise Apartments Block A',
+<<<<<<< HEAD
     location: '12 Green Park Road, Bengaluru',
+=======
+    location: '12 Vidyanagar Main Road, Hubballi',
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
   },
 }
 
@@ -43,22 +55,39 @@ const DEMO_RESIDENT = {
   user: {
     id: 'usr-resident-1',
     email: 'resident@solarconnect.internal',
+<<<<<<< HEAD
     user_metadata: { full_name: 'Resident' },
   },
   profile: {
     id: 'usr-resident-1',
     full_name: 'Resident',
+=======
+    user_metadata: { full_name: 'Solar Resident', role: 'resident' },
+  },
+  profile: {
+    id: 'usr-resident-1',
+    full_name: 'Solar Resident',
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
     email: 'resident@solarconnect.internal',
     unit_number: 'B-204',
     building_id: '11111111-1111-1111-1111-111111111111',
     role: 'resident',
+<<<<<<< HEAD
     panel_count: 8,
     panel_capacity_kw: 4.0,
+=======
+    panel_count: 0,
+    panel_capacity_kw: 0,
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
   },
   building: {
     id: '11111111-1111-1111-1111-111111111111',
     building_name: 'Sunrise Apartments Block A',
+<<<<<<< HEAD
     location: '12 Green Park Road, Bengaluru',
+=======
+    location: '12 Vidyanagar Main Road, Hubballi',
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
   },
 }
 
@@ -140,11 +169,41 @@ export function AuthProvider({ children }) {
 
         // Demo fallback session when Supabase session is not active
         if (isMounted) {
+<<<<<<< HEAD
           const savedRole = localStorage.getItem('solarconnect_demo_role') || 'admin'
           const activeDemo = savedRole === 'resident' ? DEMO_RESIDENT : DEMO_ADMIN
           setUser(activeDemo.user)
           setProfile(activeDemo.profile)
           setBuilding(activeDemo.building)
+=======
+          const customUserJson = localStorage.getItem('solarconnect_custom_user')
+          if (customUserJson) {
+            try {
+              const parsed = JSON.parse(customUserJson)
+              setUser(parsed.user)
+              setProfile(parsed.profile)
+              setBuilding(parsed.building || DEMO_ADMIN.building)
+              setLoading(false)
+              return
+            } catch {}
+          }
+
+          const savedRole = localStorage.getItem('solarconnect_demo_role')
+          if (savedRole === 'admin') {
+            setUser(DEMO_ADMIN.user)
+            setProfile(DEMO_ADMIN.profile)
+            setBuilding(DEMO_ADMIN.building)
+          } else if (savedRole === 'resident') {
+            setUser(DEMO_RESIDENT.user)
+            setProfile(DEMO_RESIDENT.profile)
+            setBuilding(DEMO_RESIDENT.building)
+          } else {
+            // Default unauthenticated visitor state on initial presentation landing
+            setUser(null)
+            setProfile(null)
+            setBuilding(null)
+          }
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
         }
       } catch (err) {
         console.warn('[AuthContext] Session init error, using fallback admin:', err)
@@ -213,12 +272,50 @@ export function AuthProvider({ children }) {
       }
 
       // Live Supabase signup
+<<<<<<< HEAD
+=======
+      if (!isSupabaseConfigured) {
+        // Fallback local registration for live judge presentation
+        const newUserId = `usr-${Date.now()}`
+        const userRole = metadata.role === 'admin' ? 'admin' : 'resident'
+        const newProfile = {
+          id: newUserId,
+          full_name: metadata.full_name?.trim() || email.split('@')[0],
+          email: email.trim(),
+          role: userRole,
+          building_id: metadata.building_id || '11111111-1111-1111-1111-111111111111',
+          unit_number: metadata.unit_number?.trim() || '',
+          panel_count: Number(metadata.panel_count) || 0,
+          panel_capacity_kw: Number(metadata.panel_capacity_kw) || 0,
+        }
+        const newUser = {
+          id: newUserId,
+          email: email.trim(),
+          user_metadata: { full_name: newProfile.full_name, role: userRole },
+        }
+        setUser(newUser)
+        setProfile(newProfile)
+        setBuilding(DEMO_ADMIN.building)
+        localStorage.setItem('solarconnect_demo_role', userRole)
+        localStorage.setItem('solarconnect_custom_user', JSON.stringify({
+          user: newUser,
+          profile: newProfile,
+          building: DEMO_ADMIN.building,
+        }))
+        return { data: { user: newUser }, error: null }
+      }
+
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
       const { data, error } = await supabase.auth.signUp({
         email: email.trim(),
         password,
         options: {
           data: {
             full_name: metadata.full_name,
+<<<<<<< HEAD
+=======
+            role: metadata.role || 'resident',
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
             building_id: metadata.building_id,
           },
         },
@@ -232,7 +329,11 @@ export function AuthProvider({ children }) {
           id: data.user.id,
           full_name: metadata.full_name?.trim() || email.split('@')[0],
           email: email.trim(),
+<<<<<<< HEAD
           role: 'resident',
+=======
+          role: metadata.role || 'resident',
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
           building_id: metadata.building_id || null,
           unit_number: metadata.unit_number?.trim() || '',
           panel_count: Number(metadata.panel_count) || 0,
@@ -299,6 +400,10 @@ export function AuthProvider({ children }) {
       }
     } catch {}
     localStorage.removeItem('solarconnect_demo_role')
+<<<<<<< HEAD
+=======
+    localStorage.removeItem('solarconnect_custom_user')
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
     setUser(null)
     setProfile(null)
     setBuilding(null)

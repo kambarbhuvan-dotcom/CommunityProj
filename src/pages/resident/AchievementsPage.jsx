@@ -39,6 +39,7 @@ import Badge from '../../components/ui/Badge'
 import Button from '../../components/ui/Button'
 import MonthlyImpactChart from '../../components/charts/MonthlyImpactChart'
 import AnnualImpactChart from '../../components/charts/AnnualImpactChart'
+<<<<<<< HEAD
 import { getStoredRecords } from '../../services/energyStorageService'
 import { DEMO_ACHIEVEMENTS } from '../../data/demoData'
 import { ELECTRICITY_RATE, CO2_FACTOR } from '../../utils/constants'
@@ -46,10 +47,23 @@ import { formatDate } from '../../utils/formatters'
 
 export default function AchievementsPage() {
   const [activeTab, setActiveTab] = useState('calculator') // 'calculator' | 'achievements'
+=======
+import { getEnergyLogs, getUserSettings } from '../../services/solarDataService'
+import { calculateAggregatedAnalytics } from '../../utils/calculations'
+import { ELECTRICITY_RATE, CO2_FACTOR } from '../../utils/constants'
+import { formatDate } from '../../utils/formatters'
+import { useAuth } from '../../context/AuthContext'
+
+export default function AchievementsPage() {
+  const { user } = useAuth()
+  const [activeTab, setActiveTab] = useState('calculator') // 'calculator' | 'achievements'
+  const [userLogs, setUserLogs] = useState([])
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
 
   // ─── Calculator Inputs State ───────────────────────────────────────────────
   const [genKwh, setGenKwh] = useState('15.0')
   const [utilizedKwh, setUtilizedKwh] = useState('12.0')
+<<<<<<< HEAD
   const [tariff, setTariff] = useState(() => {
     const saved = localStorage.getItem('solarconnect_tariff')
     return saved !== null ? parseFloat(saved) : ELECTRICITY_RATE
@@ -58,6 +72,103 @@ export default function AchievementsPage() {
     const saved = localStorage.getItem('solarconnect_emission_factor')
     return saved !== null ? parseFloat(saved) : CO2_FACTOR
   })
+=======
+  const [tariff, setTariff] = useState(ELECTRICITY_RATE)
+  const [emissionFactor, setEmissionFactor] = useState(CO2_FACTOR)
+
+  useEffect(() => {
+    async function initData() {
+      try {
+        const [logs, settings] = await Promise.all([
+          getEnergyLogs(user?.id),
+          getUserSettings(user?.id),
+        ])
+        setUserLogs(logs)
+        if (settings?.electricity_tariff_inr) {
+          setTariff(Number(settings.electricity_tariff_inr))
+        }
+        if (settings?.grid_emission_factor) {
+          setEmissionFactor(Number(settings.grid_emission_factor))
+        }
+
+        if (logs.length > 0) {
+          let sumGen = 0
+          let sumUti = 0
+          logs.forEach((r) => {
+            sumGen += Number(r.solar_generated_kwh) || 0
+            sumUti += Number(r.solar_utilized_kwh) || 0
+          })
+          setGenKwh((sumGen / logs.length).toFixed(1))
+          setUtilizedKwh((sumUti / logs.length).toFixed(1))
+        }
+      } catch (err) {
+        console.error('Failed to init achievements data:', err)
+      }
+    }
+    initData()
+  }, [user?.id])
+
+  // Real Milestone Achievements derived strictly from user's logs
+  const realMilestones = useMemo(() => {
+    const agg = calculateAggregatedAnalytics(userLogs, tariff, emissionFactor)
+    const totalGen = agg.totalGen
+    const totalUtilized = agg.totalUtilized
+    const totalCO2 = agg.totalCO2
+
+    return [
+      {
+        id: 'ach-1',
+        title: 'Solar Starter',
+        description: 'Generate your first 10 kWh of rooftop clean solar energy.',
+        target: 10,
+        current: totalGen,
+        unit: 'kWh',
+        unlocked: totalGen >= 10,
+        progress: Math.min(100, Math.round((totalGen / 10) * 100)),
+      },
+      {
+        id: 'ach-2',
+        title: 'Energy Saver',
+        description: 'Utilize 50 kWh of on-site solar power directly in your home.',
+        target: 50,
+        current: totalUtilized,
+        unit: 'kWh',
+        unlocked: totalUtilized >= 50,
+        progress: Math.min(100, Math.round((totalUtilized / 50) * 100)),
+      },
+      {
+        id: 'ach-3',
+        title: 'Carbon Reducer',
+        description: 'Prevent 25 kg of carbon emissions from regional coal power generation.',
+        target: 25,
+        current: totalCO2,
+        unit: 'kg CO₂',
+        unlocked: totalCO2 >= 25,
+        progress: Math.min(100, Math.round((totalCO2 / 25) * 100)),
+      },
+      {
+        id: 'ach-4',
+        title: 'Green Community Champion',
+        description: 'Achieve 100 kg of cumulative CO₂ emissions offset.',
+        target: 100,
+        current: totalCO2,
+        unit: 'kg CO₂',
+        unlocked: totalCO2 >= 100,
+        progress: Math.min(100, Math.round((totalCO2 / 100) * 100)),
+      },
+      {
+        id: 'ach-5',
+        title: 'Mega Generator',
+        description: 'Cross 250 kWh of total rooftop solar generation milestone.',
+        target: 250,
+        current: totalGen,
+        unit: 'kWh',
+        unlocked: totalGen >= 250,
+        progress: Math.min(100, Math.round((totalGen / 250) * 100)),
+      },
+    ]
+  }, [userLogs, tariff, emissionFactor])
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
 
   // Numeric parsing
   const numGen = Math.max(0, parseFloat(genKwh) || 0)
@@ -76,6 +187,7 @@ export default function AchievementsPage() {
 
   // Load user logged average from local storage
   const handleLoadUserAverage = () => {
+<<<<<<< HEAD
     const records = getStoredRecords()
     if (records.length > 0) {
       let sumGen = 0
@@ -86,6 +198,17 @@ export default function AchievementsPage() {
       })
       const avgGen = (sumGen / records.length).toFixed(1)
       const avgUti = (sumUti / records.length).toFixed(1)
+=======
+    if (userLogs.length > 0) {
+      let sumGen = 0
+      let sumUti = 0
+      userLogs.forEach((r) => {
+        sumGen += Number(r.solar_generated_kwh) || 0
+        sumUti += Number(r.solar_utilized_kwh) || 0
+      })
+      const avgGen = (sumGen / userLogs.length).toFixed(1)
+      const avgUti = (sumUti / userLogs.length).toFixed(1)
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
       setGenKwh(avgGen)
       setUtilizedKwh(avgUti)
     }
@@ -177,6 +300,7 @@ export default function AchievementsPage() {
           <div>
             <div className="bg-[#EAF6FF] rounded-2xl p-5 border border-[#DCEBFA] mb-6 flex items-center justify-between">
               <div>
+<<<<<<< HEAD
                 <h3 className="text-sm font-bold text-[#153B65]">Community Sustainability Milestones</h3>
                 <p className="text-xs text-[#153B65]/80 mt-0.5">
                   Celebrate our community's shared accomplishments towards cleaner skies and local energy independence.
@@ -202,6 +326,66 @@ export default function AchievementsPage() {
                       <h4 className="font-bold text-[#153B65] text-sm">{a.title}</h4>
                       <p className="text-xs text-[#64748B] mt-1 leading-relaxed">{a.description}</p>
                       <p className="text-[11px] text-[#64748B] mt-2">Achieved on {formatDate(a.achieved_at)}</p>
+=======
+                <h3 className="text-sm font-bold text-[#153B65]">Solar Milestones & Badges</h3>
+                <p className="text-xs text-[#153B65]/80 mt-0.5">
+                  Milestones automatically unlock as you log your daily solar generation and clean energy consumption.
+                </p>
+              </div>
+              <Badge variant="eco">
+                {realMilestones.filter((m) => m.unlocked).length} / {realMilestones.length} Unlocked
+              </Badge>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {realMilestones.map((a) => (
+                <div
+                  key={a.id}
+                  className={`bg-white rounded-2xl shadow-card p-5 border transition-all ${
+                    a.unlocked
+                      ? 'border-[#22C55E]/40 hover:border-[#22C55E]'
+                      : 'border-[#DCEBFA] hover:border-[#87CEEB]'
+                  }`}
+                >
+                  <div className="flex items-start gap-3.5">
+                    <div className={`w-11 h-11 rounded-xl border flex items-center justify-center shrink-0 ${
+                      a.unlocked
+                        ? 'bg-emerald-50 text-[#22C55E] border-emerald-200'
+                        : 'bg-[#EAF6FF] text-[#0EA5E9] border-[#DCEBFA]'
+                    }`}>
+                      <Trophy size={20} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      {a.unlocked ? (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#22C55E] bg-[#F0FDF4] border border-[#DCFCE7] px-2 py-0.5 rounded-full mb-1">
+                          ✓ Milestone Unlocked
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#64748B] bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full mb-1">
+                          In Progress ({a.progress}%)
+                        </span>
+                      )}
+                      <h4 className="font-bold text-[#153B65] text-sm">{a.title}</h4>
+                      <p className="text-xs text-[#64748B] mt-1 leading-relaxed">{a.description}</p>
+                      
+                      {/* Progress bar */}
+                      <div className="mt-3">
+                        <div className="flex justify-between text-[11px] text-[#64748B] font-medium mb-1">
+                          <span>Progress</span>
+                          <span className="font-bold text-[#153B65]">
+                            {a.current.toFixed(1)} / {a.target} {a.unit}
+                          </span>
+                        </div>
+                        <div className="w-full h-1.5 rounded-full bg-slate-100 overflow-hidden">
+                          <div
+                            className={`h-full rounded-full transition-all duration-300 ${
+                              a.unlocked ? 'bg-[#22C55E]' : 'bg-[#0EA5E9]'
+                            }`}
+                            style={{ width: `${a.progress}%` }}
+                          />
+                        </div>
+                      </div>
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
                     </div>
                   </div>
                 </div>

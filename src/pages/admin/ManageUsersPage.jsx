@@ -545,7 +545,11 @@ export default function ManageUsersPage() {
               <input
                 type="text"
                 className="form-input"
+<<<<<<< HEAD
                 placeholder="e.g. Meera Sundaram"
+=======
+                placeholder="e.g. Ananya Rao"
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
                 value={formData.full_name}
                 onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
                 required

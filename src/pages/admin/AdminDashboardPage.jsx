@@ -28,7 +28,10 @@ import Card from '../../components/ui/Card'
 import Badge from '../../components/ui/Badge'
 import Button from '../../components/ui/Button'
 import { SkeletonStatCard } from '../../components/ui/Skeleton'
+<<<<<<< HEAD
 import SolarCommunity3D from '../../components/SolarCommunity3D'
+=======
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
 import { getAdminDashboardOverview } from '../../services/adminService'
 import { formatDate } from '../../utils/formatters'
 import { calcCostSaved, calcCO2Avoided, calcNetEnergy } from '../../utils/calculations'
@@ -83,6 +86,7 @@ export default function AdminDashboardPage() {
           </span>
         </div>
 
+<<<<<<< HEAD
         {/* Interactive 3D solar visualization — shared with the resident portal. */}
         <section className="sc-3d-stage mb-6" aria-label="Administrator community solar overview">
           <div className="sc-stage-copy">
@@ -103,6 +107,8 @@ export default function AdminDashboardPage() {
           </div>
         </section>
 
+=======
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
         {/* 1. Core KPIs from Prompt */}
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">

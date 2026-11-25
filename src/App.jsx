@@ -49,8 +49,16 @@ const RegisterPage     = lazy(() => import('./pages/public/RegisterPage'))
 
 // ─── Resident pages ────────────────────────────────────────────────────────
 const DashboardPage       = lazy(() => import('./pages/resident/DashboardPage'))
+<<<<<<< HEAD
 const LogEnergyPage       = lazy(() => import('./pages/resident/LogEnergyPage'))
 const MyRecordsPage       = lazy(() => import('./pages/resident/MyRecordsPage'))
+=======
+const MySolarSetupPage    = lazy(() => import('./pages/resident/MySolarSetupPage'))
+const LogEnergyPage       = lazy(() => import('./pages/resident/LogEnergyPage'))
+const MyRecordsPage       = lazy(() => import('./pages/resident/MyRecordsPage'))
+const AnalyticsPage       = lazy(() => import('./pages/resident/AnalyticsPage'))
+const SettingsPage        = lazy(() => import('./pages/resident/SettingsPage'))
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
 const CommunityStatsPage  = lazy(() => import('./pages/resident/CommunityStatsPage'))
 const GuidesPage          = lazy(() => import('./pages/resident/GuidesPage'))
 const GuideDetailPage     = lazy(() => import('./pages/resident/GuideDetailPage'))
@@ -78,11 +86,16 @@ export default function App() {
           {/* ── Public routes ──────────────────────────────────────────── */}
           <Route path="/"         element={<LandingPage />} />
           <Route path="/about"    element={<AboutPage />} />
+<<<<<<< HEAD
+=======
+          <Route path="/learn"    element={<AboutPage />} />
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
           <Route path="/login"    element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
 
           {/* ── Resident routes (login required) ──────────────────────── */}
           <Route element={<ProtectedRoute />}>
+<<<<<<< HEAD
             <Route path="/dashboard"    element={<DashboardPage />} />
             <Route path="/log"          element={<LogEnergyPage />} />
             <Route path="/records"      element={<MyRecordsPage />} />
@@ -94,6 +107,22 @@ export default function App() {
             <Route path="/impact"       element={<AchievementsPage />} />
             <Route path="/announcements" element={<AnnouncementsPage />} />
             <Route path="/profile"      element={<ProfilePage />} />
+=======
+            <Route path="/dashboard"     element={<DashboardPage />} />
+            <Route path="/setup"         element={<MySolarSetupPage />} />
+            <Route path="/log"           element={<LogEnergyPage />} />
+            <Route path="/records"       element={<MyRecordsPage />} />
+            <Route path="/analytics"     element={<AnalyticsPage />} />
+            <Route path="/settings"      element={<SettingsPage />} />
+            <Route path="/community"     element={<CommunityStatsPage />} />
+            <Route path="/guides"        element={<GuidesPage />} />
+            <Route path="/guides/:slug"  element={<GuideDetailPage />} />
+            <Route path="/achievements"  element={<AchievementsPage />} />
+            <Route path="/calculator"    element={<AchievementsPage />} />
+            <Route path="/impact"        element={<AchievementsPage />} />
+            <Route path="/announcements" element={<AnnouncementsPage />} />
+            <Route path="/profile"       element={<ProfilePage />} />
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
           </Route>
 
           {/* ── Admin routes (admin role required) ────────────────────── */}

@@ -12,7 +12,11 @@ import Modal from '../../components/ui/Modal'
 import EmptyState from '../../components/ui/EmptyState'
 
 const DEMO_BUILDINGS = [
+<<<<<<< HEAD
   { id: 'b1', name: 'Sunrise Apartments Block A', address: '12 Green Park Road', city: 'Bengaluru', total_units: 24, residents: 6 },
+=======
+  { id: 'b1', name: 'Sunrise Apartments Block A', address: '12 Vidyanagar Main Road', city: 'Hubballi', total_units: 24, residents: 6 },
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
 ]
 
 export default function ManageBuildingsPage() {
@@ -69,7 +73,11 @@ export default function ManageBuildingsPage() {
             <div><label className="form-label">Building name</label><input className="form-input" placeholder="Sunrise Apartments Block A" /></div>
             <div><label className="form-label">Address</label><input className="form-input" placeholder="12 Green Park Road" /></div>
             <div className="grid grid-cols-2 gap-3">
+<<<<<<< HEAD
               <div><label className="form-label">City</label><input className="form-input" placeholder="Bengaluru" /></div>
+=======
+              <div><label className="form-label">City</label><input className="form-input" placeholder="Hubballi" /></div>
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
               <div><label className="form-label">Total units</label><input type="number" className="form-input" placeholder="24" /></div>
             </div>
             <div className="flex gap-3 justify-end pt-2">

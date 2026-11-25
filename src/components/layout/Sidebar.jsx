@@ -8,13 +8,20 @@
  */
 import { NavLink } from 'react-router-dom'
 import {
+<<<<<<< HEAD
   LayoutDashboard, Zap, Users, BookOpen, Leaf, Settings,
   ShieldCheck, FileText, Building2, Bell, Trophy, Sun, Calendar,
   X, Sparkles
+=======
+  LayoutDashboard, Zap, Users, BookOpen, Leaf, Settings as SettingsIcon,
+  ShieldCheck, FileText, Building2, Bell, Trophy, Sun, Calendar,
+  X, Sparkles, SlidersHorizontal, BarChart2, User
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
 } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 
 const mainNav = [
+<<<<<<< HEAD
   { to: '/dashboard',    icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/log',          icon: Zap,             label: 'Energy Tracking' },
   { to: '/records',      icon: FileText,        label: 'My Records' },
@@ -26,6 +33,22 @@ const mainNav = [
 const accountNav = [
   { to: '/announcements', icon: Bell,     label: 'Announcements' },
   { to: '/profile',       icon: Settings, label: 'Settings' },
+=======
+  { to: '/dashboard',    icon: LayoutDashboard,    label: 'Dashboard' },
+  { to: '/setup',        icon: SlidersHorizontal,  label: 'My Solar Setup' },
+  { to: '/log',          icon: Zap,                label: 'Log Energy' },
+  { to: '/records',      icon: FileText,           label: 'My Energy Records' },
+  { to: '/analytics',    icon: BarChart2,          label: 'Analytics' },
+  { to: '/achievements', icon: Leaf,               label: 'Environmental Impact' },
+  { to: '/community',    icon: Users,              label: 'Community' },
+  { to: '/guides',       icon: BookOpen,           label: 'Learn Solar' },
+]
+
+const accountNav = [
+  { to: '/announcements', icon: Bell,         label: 'Announcements' },
+  { to: '/settings',      icon: SettingsIcon, label: 'Settings' },
+  { to: '/profile',       icon: User,         label: 'Profile' },
+>>>>>>> 50d5ae593c92274200837e29f7fae68256c4c3ae
 ]
 
 const adminNav = [
